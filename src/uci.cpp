@@ -44,6 +44,7 @@ namespace {
   void set_position(Position& pos, istringstream& up);
   void go(Position& pos, istringstream& up);
   void perft(Position& pos, istringstream& up);
+  void check_legality(Position& pos, istringstream& up);
 }
 
 
@@ -119,6 +120,9 @@ void uci_loop() {
           cout << "id name "     << engine_info(true)
                << "\n"           << Options
                << "\nuciok"      << endl;
+      else if (token == "islegal") {
+          check_legality(pos, is);
+      }
       else
           cout << "Unknown command: " << cmd << endl;
   }
@@ -257,5 +261,17 @@ namespace {
     std::cout << "\nNodes " << n
               << "\nTime (ms) " << time
               << "\nNodes/second " << int(n / (time / 1000.0)) << std::endl;
+  }
+
+  // check_legality is for checking if the send move is legal in the current pos
+  void check_legality(Position& pos, istringstream& is) {
+      string token;
+      is >> token;
+      if(move_from_uci(pos, token) != MOVE_NONE) {
+          std::cout << "legalok" << std::endl;
+      }
+      else {
+          std::cout << "notlegal " << token << std::endl;
+      }
   }
 }
